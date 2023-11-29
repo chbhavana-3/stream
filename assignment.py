@@ -1,27 +1,26 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 
 df = pd.DataFrame({
-                    'age':np.random.randint(1,30,1000), 
-                   'exp':np.random.randint(1,10,1000),
-                   'cg':np.random.randint(1,10,1000),
-                    # 'pay':[200, 500, 750, 1200, 2000],
-                    # 'pay':np.random.randint(1000,1500,1000)
-                  })
+                    'age':np.random.randint(1,40,1000), 
+                   'exp':np.random.randint(1,20,1000),
+                   'salary':np.random.randint(1,30,1000),
+                    
+                 })
 
-# df['cg'] = df['exp']*3
-df['pay'] = df['age']*6 + df['exp']*3
+df['salary'] = df['age']*6 + df['exp']*3
 
-# print(df)
-X = df.drop(['pay', 'exp'],axis=1)
-y = df['pay']
+X = df.drop(['salary'],axis=1)
+y = df['salary']
 
 import streamlit as st
-# a = st.radio("Choose a feature",[item for item in X.columns])
 a = st.radio("select features you want to select", [item for item in X.columns])
 st.write(f"selected feature is {a}")
 # print(a)
@@ -40,3 +39,27 @@ y_pred_test = model.predict(X_test)
 score_test = r2_score(y_test, y_pred_test)
 print(f"\n R-square for test is {score_test*100}\n")
 st.write(f"\n R-square for test is {score_test*100}\n")
+
+decision_tree_regressor = DecisionTreeRegressor(max_depth=3).fit(X_train, y_train)
+y_pred_tree = decision_tree_regressor.predict(X_train)
+mse_tree = mean_squared_error(y_train, y_pred_tree)
+print(f'Mean Squared Error (Decision Tree)for train is {mse_tree}\n')
+st.write(f'\n Mean Squared Error (Decision Tree)for train is {mse_tree}\n')
+
+decision_tree_regressor = DecisionTreeRegressor(max_depth=3).fit(X_train, y_train)
+y_pred_tree = decision_tree_regressor.predict(X_test)
+mse_tree = mean_squared_error(y_test, y_pred_tree)
+print(f'Mean Squared Error (Decision Tree) {mse_tree}\n')
+st.write(f'\n Mean Squared Error (Decision Tree) for test is {mse_tree}\n')
+
+knn_regressor = KNeighborsRegressor(n_neighbors=3).fit(X_train, y_train)
+y_pred = knn_regressor.predict(X_train)
+mse = mean_squared_error(y_train, y_pred)
+print(f'Mean Squared Error(KNN): {mse}')
+st.write(f"\n (f'Mean Squared Error(KNN)for train is: {mse}\n")
+
+knn_regressor = KNeighborsRegressor(n_neighbors=3).fit(X_train, y_train)
+y_pred = knn_regressor.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error(KNN): {mse}')
+st.write(f"\n (f'Mean Squared Error(KNN) for test is: {mse}\n")
